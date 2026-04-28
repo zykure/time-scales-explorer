@@ -12,8 +12,7 @@ export const countLunarCycles = (start: DateTime, end: DateTime): {
   currentPhase: number; // 0-1 representing current position in lunar cycle
 } => {
   const diffMs = end.toMillis() - start.toMillis();
-  const totalCycles = diffMs / SYNODIC_MONTH_MS;
-  const count = Math.floor(totalCycles);
+  const count = diffMs / SYNODIC_MONTH_MS;
 
   // Calculate current phase
   const msSinceReference = end.toMillis() - REFERENCE_NEW_MOON.toMillis();
@@ -25,8 +24,7 @@ export const countLunarCycles = (start: DateTime, end: DateTime): {
 // Count Saros cycles using astronomical approximation
 export const countSarosCycles = (start: DateTime, end: DateTime): number => {
   const diffMs = end.toMillis() - start.toMillis();
-  const sarosCycles = diffMs / SAROS_CYCLE_LENGTH_MS;
-  const count = Math.floor(sarosCycles);
+  const count = diffMs / SAROS_CYCLE_LENGTH_MS;
 
   return count;
 };

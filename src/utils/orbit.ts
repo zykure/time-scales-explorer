@@ -8,7 +8,7 @@ export const countEarthOrbits = (start: DateTime, end: DateTime): {
   currentProgress: number;
 } => {
   const siderealYearMs = (end.toMillis() - start.toMillis()) / SIDEREAL_YEAR_MS;
-  const count = Math.floor(siderealYearMs);
+  const count = siderealYearMs;
   const currentProgress = siderealYearMs % 1;
 
   return { count, currentProgress };
