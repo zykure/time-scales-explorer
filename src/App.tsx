@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { cache, useState, useEffect, useCallback } from 'react';
 import { DatePicker, type ReactDatePickerCustomHeaderProps } from 'react-datepicker';
 import { DateTime } from 'luxon';
 import { calculateTimeDiff, calculateStandardScales, calculateAstronomicalScales } from './utils/calculations';
@@ -11,7 +11,7 @@ import './App.css'
 
 function App() {
 
-  const defaultStartDate = new Date('1986-03-25T18:16:00+0100');
+  const defaultStartDate = new Date('1986-04-26T01:23:00+0400');  // use a significant date as default
 
   const [startDateInput, setStartDateInput] = useState<Date | null>(defaultStartDate);
   const [endDateInput, setEndDateInput] = useState<Date | null>(null);
@@ -39,7 +39,10 @@ function App() {
     return base.plus({ months: offsetMonths, days: offsetDays, hours: offsetHours }).toJSDate();
   }
 
-  // Memoize the calculation function so it doesn't recreate every render
+  const getStandardScales = cache(calculateStandardScales);
+  const getAstronomicalScales = cache(calculateAstronomicalScales);
+
+  // Memorize the calculation function so it doesn't recreate every render
   const performCalculation = useCallback(() => {
     try {
       const startDate = getEffectiveDate(startDateInput, startMonthOffset, startDayOffset, startHourOffset);
@@ -48,8 +51,8 @@ function App() {
       console.log('[App] start/end date is: ', startDate ? startDate.toString() : 'null', ' - ', endDate ? endDate.toString() : 'null');
       const { milliseconds, interval } = calculateTimeDiff(startDate, endDate);
 
-      const standard = calculateStandardScales(milliseconds, interval.start, interval.end);
-      const astronomical = calculateAstronomicalScales(milliseconds, interval.start, interval.end);
+      const standard = getStandardScales(milliseconds, interval.start, interval.end);
+      const astronomical = getAstronomicalScales(milliseconds, interval.start, interval.end);
 
       setResult({
         standard,
@@ -246,7 +249,7 @@ function App() {
             <div className="space-y-4">
               <label className="block text-sm font-bold text-gray-700">Start Date</label>
               <DatePicker
-              showIcon showTimeSelect closeOnScroll
+              showIcon showTimeSelect closeOnScroll isClearable
               selected={startDateInput}
               onChange={(date) => handleStartInput(date)}
               dateFormat="YYYY-MM-dd HH:mm:ss"
@@ -314,7 +317,7 @@ function App() {
             <div className="space-y-4">
               <label className="block text-sm font-bold text-gray-700">End Date</label>
               <DatePicker
-                showIcon showTimeSelect closeOnScroll
+                showIcon showTimeSelect closeOnScroll isClearable
                 selected={endDateInput}
                 onChange={(date) => handleEndInput(date)}
                 dateFormat="YYYY-MM-dd HH:mm:ss"
@@ -409,7 +412,7 @@ function App() {
                     <span></span>
                     <span className="text-left">{scale.label}</span>
                     <span className="text-right font-mono">
-                      {formatNumber(Number(scale.value), scale.id === 'distance' ? 2 : (scale.value > 0 && scale.value < 1) ? 2 : 0)}
+                      {formatNumber(Number(scale.value), (scale.value != Math.floor(scale.value)) ? (scale.value < 1 ? 2 : 1) : 0)}
                     </span>
                     <span className="text-left font-mono">
                       {' '}

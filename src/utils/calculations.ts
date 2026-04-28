@@ -1,9 +1,9 @@
 import { DateTime, Interval } from 'luxon';
 import type { TimeScale } from '../types/timeScales';
 import { countDecades } from './decades';
-//import { countEclipses } from './eclipses';
+import { countEclipses } from './eclipses';
 import { countLeapSeconds, countLeapYears } from './leap';
-import { countLunarCycles } from './lunar';
+import { countLunarCycles, countSarosCycles } from './lunar';
 import { countSolarCycles } from './solar';
 import { countEarthOrbits } from './orbit';
 
@@ -67,13 +67,13 @@ export const calculateStandardScales = (milliseconds: number, start: DateTime, e
 export const calculateAstronomicalScales = (milliseconds: number, start: DateTime, end: DateTime): TimeScale[] => {
   const lunar = countLunarCycles(start, end);
   const solar = countSolarCycles(start, end);
+  const sarosCycles = countSarosCycles(start, end);
   const earthOrbits = countEarthOrbits(start, end);
   const leapYears = countLeapYears(start, end);
   const leapSeconds = countLeapSeconds(start, end);
-  //const eclipses = countEclipses(start, end);
+  const eclipses = countEclipses(start, end);
 
-  const diffMs = end.toMillis() - start.toMillis();
-  const diffYears = diffMs / (365.25 * 24 * 60 * 60 * 1000);
+  const diffYears = milliseconds / (365.25 * 24 * 60 * 60 * 1000);
   const absYears = Math.abs(diffYears);
 
   // 1. Earth around Sun
@@ -88,10 +88,11 @@ export const calculateAstronomicalScales = (milliseconds: number, start: DateTim
     { id: 'leap_seconds', label: 'Encountered Leap Seconds', value: leapSeconds, unit: 'sec', isComplete: true, progress: 1 },
     { id: 'lunar_cycles', label: 'Completed Lunar Cycles', value: lunar.count, unit: 'cycles', isComplete: true, progress: lunar.currentPhase },
     { id: 'solar_cycles', label: 'Completed Solar Cycles', value: solar.count, unit: 'cycles', isComplete: true, progress: solar.currentProgress },
+    { id: 'saros_cycles', label: 'Completed Saros Cycles', value: sarosCycles, unit: 'cycles', isComplete: true, progress: 1 },
     { id: 'earth_orbits', label: 'Completed Earth Orbits', value: earthOrbits.count, unit: 'orbits', isComplete: true, progress: earthOrbits.currentProgress },
     { id: 'galactic_orbits', label: 'Completed Galactic Orbits', value: galacticOrbits, unit: 'orbits', isComplete: true, progress: galacticOrbits % 1 },
-    //{ id: 'lunar_eclipses', label: 'Observed Lunar Eclipses', value: eclipses.lunar, unit: 'eclipses', isComplete: true, progress: 1 },
-    //{ id: 'global_solar_eclipses', label: 'Observed Solar Eclipses', value: eclipses.solar, unit: 'eclipses', isComplete: true, progress: 1 },
+    { id: 'lunar_eclipses', label: 'Observed Lunar Eclipses', value: eclipses.lunar, unit: 'eclipses', isComplete: true, progress: 1 },
+    { id: 'global_solar_eclipses', label: 'Observed Solar Eclipses', value: eclipses.solar, unit: 'eclipses', isComplete: true, progress: 1 },
     { id: 'earth_distance', label: 'Earth Distance Traveled', value: earthDistanceTraveledKm, unit: 'km', isComplete: true, progress: 1 },
     { id: 'sun_distance', label: 'Sun Distance Traveled', value: sunDistanceTraveledKm, unit: 'km', isComplete: true, progress: 1 },
   ];

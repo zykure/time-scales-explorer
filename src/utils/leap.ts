@@ -30,6 +30,8 @@ const KNOWN_LEAP_SECONDS = [
   [2012, 6, 30],
   [2015, 6, 30],
   [2016, 12, 31],
+  // updated 2026-04-28
+  // see e.g. https://en.wikipedia.org/wiki/Leap_second
 ];
 
 export const countLeapYears = (start: DateTime, end: DateTime): number => {
