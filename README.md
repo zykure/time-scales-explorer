@@ -1,73 +1,55 @@
-# React + TypeScript + Vite
+# Explore time scales between two timestamps
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+This website shows the interval between two timestamps using a variety of scales.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Standard scales from seconds, minutes, ... all the way to decades, centuries, millenia.
+- Completed decades and centuries: only counts decades (e.g. 2000-2010) that fall completely within the interval.
+- Number of encountered leap years and leap seconds; the latter uses a hard-coded list of leap second occurrences.
+- Completed lunar, solar (sunspot) and Saros cycles.
+- Completed Earth orbits (Earth around Sun) and Galactic orbits (Sun around around galactic center.)
+- Number of (theoretically) observed lunar and global solar eclipses; calculated by approximation.
+- Distance traveled of Earth around Sun, and Sun around galactic center.
+- ... and more to come!?
 
-## React Compiler
+![Screenshot of the Time Scales Explorer web app.](time-scales-app.png "Time Scales Explorer")
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Setup
 
-## Expanding the ESLint configuration
+Needs NVM/NPM to run. Written in TypeScript with Vite + React. Uses TailwindCSS for styling.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Setup script:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```sh
+# Install nvm if you don't have it
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Close and reopen your terminal to start using nvm or run the following to use it now:
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Then install latest LTS
+nvm install --lts
+nvm use --lts
+
+# Create the project with Vite + React + TypeScript
+npm create vite@latest time-scales-app -- --template react-ts
+
+cd time-scales-app
+
+# Install dependencies
+npm install -D chart.js react-chartjs-2 react-datepicker luxon tailwindcss@3.4 postcss autoprefixer astronomy-engine
+
+# Initialize Tailwind
+npx tailwindcss init -p
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Run
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+To start serving the website on a local server:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+npm run dev
 ```
