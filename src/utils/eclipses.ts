@@ -5,12 +5,18 @@ import { SearchGlobalSolarEclipse, NextGlobalSolarEclipse, SearchLunarEclipse, N
 const fromAstroDate = (jd: AstroTime): DateTime => { return DateTime.fromJSDate(jd.date); };
 
 export const countEclipses = (start: DateTime, end: DateTime): {
-  solar: number;
-  lunar: number;
+  count: {
+    solar: number;
+    lunar: number;
+  },
+  last: {
+    solar: DateTime;
+    lunar: DateTime;
+  }
 } => {
   const startDate: Date = start.toJSDate();
-  const endDate: Date = end.toJSDate();
-  const results = { solar: 0, lunar: 0 };
+  //const endDate: Date = end.toJSDate();
+  const results = { count: { solar: 0, lunar: 0 }, last: { solar: null, lunar: null } };
 
   let nextSolar = SearchGlobalSolarEclipse(startDate);
   while (true) {
@@ -18,7 +24,8 @@ export const countEclipses = (start: DateTime, end: DateTime): {
     if (solarDate > end)
       break;
 
-    results.solar++;
+    results.count.solar++;
+    results.last.solar = solarDate;
     nextSolar = NextGlobalSolarEclipse(nextSolar.peak);
   }
 
@@ -28,7 +35,8 @@ export const countEclipses = (start: DateTime, end: DateTime): {
     if (lunarDate > end)
       break;
 
-    results.lunar++;
+    results.count.lunar++;
+    results.last.lunar = lunarDate;
     nextLunar = NextLunarEclipse(nextLunar.peak);
   }
 

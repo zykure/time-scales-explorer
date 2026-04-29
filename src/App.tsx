@@ -2,7 +2,7 @@ import { cache, useState, useEffect, useCallback } from 'react';
 import { DatePicker, type ReactDatePickerCustomHeaderProps } from 'react-datepicker';
 import { DateTime } from 'luxon';
 import { calculateTimeDiff, calculateStandardScales, calculateAstronomicalScales } from './utils/calculations';
-import { formatNumber } from './utils/formatters';
+import { formatNumber, formatDate } from './utils/formatters';
 import { type TimeScale } from './types/timeScales';
 //import { ConcentricRings } from './components/ConcentricRings';
 //import { ScaleCard } from './components/ScaleCards';
@@ -393,7 +393,6 @@ function App() {
                 <h3>Casual</h3>
                 {result.standard.map(scale => (
                   <div key={scale.id} className="grid grid-cols-4 gap-4 justify-between py-1 border-b">
-                    <span></span>
                     <span className="text-left">{scale.label}</span>
                     <span className="text-right font-mono">
                       {formatNumber(Number(scale.value), scale.id === 'distance' ? 2 : 0)}
@@ -402,6 +401,7 @@ function App() {
                       {' '}
                       <span className="text-gray-500 text-sm">{scale.unit}</span>
                     </span>
+                    <span></span>
                   </div>
                 ))}
 
@@ -409,7 +409,6 @@ function App() {
                 <h3>Astronomical</h3>
                 {result.astronomical.map(scale => (
                   <div key={scale.id} className="grid grid-cols-4 gap-4 justify-between py-1 border-b">
-                    <span></span>
                     <span className="text-left">{scale.label}</span>
                     <span className="text-right font-mono">
                       {formatNumber(Number(scale.value), (scale.value != Math.floor(scale.value)) ? (scale.value < 1 ? 2 : 1) : 0)}
@@ -418,6 +417,7 @@ function App() {
                       {' '}
                       <span className="text-gray-500 text-sm">{scale.unit}</span>
                     </span>
+                    <span className="text-right text-gray-500 text-sm">{scale.last != null ? 'Last: ' + formatDate(scale.last) : ''}</span>
                   </div>
                 ))}
               </div>

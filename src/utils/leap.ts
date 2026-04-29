@@ -34,8 +34,11 @@ const KNOWN_LEAP_SECONDS = [
   // see e.g. https://en.wikipedia.org/wiki/Leap_second
 ];
 
-export const countLeapYears = (start: DateTime, end: DateTime): number => {
-  let count = 0;
+export const countLeapYears = (start: DateTime, end: DateTime): {
+  count: number;
+  last: DateTime;
+} => {
+  let results = { count: 0, last: null };
   const minYear = Math.min(start.year, end.year);
   const maxYear = Math.max(start.year, end.year);
 
@@ -52,16 +55,21 @@ export const countLeapYears = (start: DateTime, end: DateTime): number => {
       // Safer to check if the month is actually February.
       if (feb29.month === 2 && feb29.day === 29) {
         if (feb29 > start && feb29 <= end) {
-          count++;
+          results.count++;
+          results.last = feb29;
         }
       }
     }
   }
-  return count;
+
+  return results;
 };
 
-export const countLeapSeconds = (start: DateTime, end: DateTime): number => {
-  let count = 0;
+export const countLeapSeconds = (start: DateTime, end: DateTime): {
+  count: number;
+  last: DateTime;
+} => {
+  let results = { count: 0, last: null };
   const startMs = start.toMillis();
   const endMs = end.toMillis();
 
@@ -70,8 +78,10 @@ export const countLeapSeconds = (start: DateTime, end: DateTime): number => {
     const leapMs = leapDate.toMillis();
 
     if (leapMs > startMs && leapMs <= endMs) {
-      count++;
+      results.count++;
+      results.last = leapDate;
     }
   }
-  return count;
+
+  return results;
 };

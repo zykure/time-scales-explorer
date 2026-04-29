@@ -1,3 +1,5 @@
+import { type DateTime } from 'luxon';
+
 /**
  * Formats a number with:
  * - Thousands separators (e.g., 10 000)
@@ -35,3 +37,11 @@ export const formatNumber = (
 export const formatDistance = (km: number): string => {
   return formatNumber(km, 2, 1e12, 1e-4);
 };
+
+export const formatDate = (date: DateTime): string => {
+    return date.toJSDate().toDateString();
+}
+
+export const formatDateTime = (date: DateTime): string => {
+    return date.toJSDate().toString();
+}

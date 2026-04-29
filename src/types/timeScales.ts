@@ -1,12 +1,13 @@
+import { type DateTime } from 'luxon';
+
 export type TimeDirection = 'past' | 'future';
 
 export interface TimeScale {
   id: string;
   label: string;
   value: number;
+  last: DateTime;
   unit: string;
-  isComplete: boolean;  // Has the cycle finished?
-  progress: number;     // 0-1 for visualization
 }
 
 export interface TimeResult {
